@@ -1,5 +1,6 @@
 <?php
 require_once 'controller.php';
+require_once 'validation.php'; 
 class Users extends Controller
 {
     public function __construct()
@@ -32,9 +33,18 @@ class Users extends Controller
         if(isset($_POST['submit']))
         {
             $userName=$_POST['name'];
-            $password=$_POST['password'];
+           
             $email=$_POST['email'];
-           if($userName!=""&&$password!=""&&$email!="")
+            $password=$_POST['password'];
+            $checkPass=$_POST['retype_password'];
+            $vali= new Validation();
+            $data = $vali->check($userName,  $email,$password, $checkPass, 6,19);
+          
+
+            //  $data = $vali->minMax($userName,5,20,"name");
+
+             if($data=="pass"){
+            if($userName!=""&&$password!=""&&$email!="")
            {
                $user_data =array(
                    'name'=>$userName,
@@ -58,7 +68,16 @@ class Users extends Controller
 
                 }
            } 
+     
+        }
+        else {
+            $type='danger';
+            // $message="can not create user please check your data ";
+        
+            $this->view('register',array('type'=>$type,'message'=>$data,'form_values'=>$_POST));
 
+         }
+        
         }
         
     }
